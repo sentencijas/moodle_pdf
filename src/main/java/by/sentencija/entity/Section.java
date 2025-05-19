@@ -1,6 +1,6 @@
 package by.sentencija.entity;
 
-import by.sentencija.entity.elements.CourseElement;
+import by.sentencija.entity.element.CourseElement;
 
 import java.util.List;
 

@@ -1,7 +1,7 @@
 package by.sentencija.entity.parser;
 
 import by.sentencija.entity.Section;
-import by.sentencija.entity.elements.CourseElement;
+import by.sentencija.entity.element.CourseElement;
 import lombok.val;
 import org.xml.sax.SAXException;
 

@@ -1,3 +1,3 @@
-package by.sentencija.entity.elements;
+package by.sentencija.entity.element;
 
 public abstract class CourseElement{} //marker class

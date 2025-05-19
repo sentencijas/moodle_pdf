@@ -1,4 +1,4 @@
-package by.sentencija.entity.elements;
+package by.sentencija.entity.element;
 
 import by.sentencija.entity.PDFConvertable;
 
