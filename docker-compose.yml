@@ -1,0 +1,37 @@
+services:
+  postgres_moodle:
+    image: postgres:latest
+    container_name: postgres_moodle_container
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_USER=root
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 1s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - postgresdata:/var/lib/postgresql/data
+    networks:
+      - moodle-network
+  moodle_compose:
+    image: moodlehq/moodle-php-apache:8.3-bullseye
+    container_name: moodle_container
+    ports:
+      - "8080:80"
+    depends_on:
+      postgres_moodle:
+        condition: service_healthy
+    volumes:
+      - moodledata:/var/www
+    networks:
+      - moodle-network
+volumes:
+  postgresdata:
+  moodledata:
+networks:
+  moodle-network:
+    driver: bridge
+# P4ssw*rd
