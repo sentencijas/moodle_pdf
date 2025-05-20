@@ -22,7 +22,7 @@ public class Main {
      //запуск
         String fontPath = "moodle_pdf\\src\\pdfmaker\\FreeSans.ttf";
         String outputFilePath = "moodle_pdf\\src\\pdfmaker\\output.pdf";
-        PdfCourseRenderer.generate(result, fontPath, outputFilePath);
+        MoodlePdfGenerator.generatePdfFromCourse(result, fontPath, outputFilePath);
     
     
     
