@@ -21,14 +21,20 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-compress</artifactId>
+            <version>1.26.1</version>
+        </dependency>
+        <dependency>
             <groupId>com.itextpdf</groupId>
-            <artifactId>itext7-core</artifactId>
-            <version>7.2.5</version>
+            <artifactId>itext-core</artifactId>
+            <version>9.2.0</version>
+            <type>pom</type>
         </dependency>
         <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>forms</artifactId>
-            <version>7.2.5</version>
+            <version>9.2.0</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -36,5 +42,4 @@
             <version>1.7.36</version>
         </dependency>
     </dependencies>
-    
 </project>
