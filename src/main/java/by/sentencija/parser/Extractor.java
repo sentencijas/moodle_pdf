@@ -35,7 +35,6 @@ public class Extractor {
                     FileOutputStream fos = new FileOutputStream(innerArchive.toFile())
             ) {
                 gis.transferTo(fos);
-                System.out.println("GZ decompressed to: " + innerArchive);
             }
 
             // Step 2: Try various archive formats

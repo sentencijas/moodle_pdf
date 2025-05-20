@@ -49,7 +49,16 @@ public class QuestionsParser extends XMLParser<Map<Integer,Question>> {
     static final class MultipleChoiceQuestionParser implements QuestionParser {
         @Override
         public MultipleChoiceQuestion parse(String questionText, Element element) {
-            return new MultipleChoiceQuestion(questionText, Map.of()); //TODO
+            val answers = element.getElementsByTagName("answer");
+            val result = new HashMap<String, Double>();
+            for(int i = 0;i<answers.getLength();i++){
+                val thisAnswer = (Element) answers.item(i);
+                result.put(
+                        getValue(thisAnswer, "answertext"),
+                        Double.parseDouble(getValue(thisAnswer, "fraction"))
+                );
+            }
+            return new MultipleChoiceQuestion(questionText, result);
         }
     }
 }

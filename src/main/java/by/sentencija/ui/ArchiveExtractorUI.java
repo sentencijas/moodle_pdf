@@ -72,7 +72,7 @@ public class ArchiveExtractorUI {
 
         processButton.addActionListener(e -> {
             try {
-                parse(filePathField.getText(), folderPathField.getText());
+                parse(filePathField.getText(), folderPathField.getText(), true);
             } catch (ParserConfigurationException ex) {
                 throw new RuntimeException(ex);
             } catch (IOException ex) {
@@ -121,13 +121,13 @@ public class ArchiveExtractorUI {
         }
     }
 
-    public static void parse(String archivePath, String targetPath) throws ParserConfigurationException, IOException, SAXException {
+    public static void parse(String archivePath, String targetPath, boolean deleteUnarchived) throws ParserConfigurationException, IOException, SAXException {
         final String TEMPORARY_FOLDER = "temp";
         final String BACKUP_FOLDER_NAME = "/backup";
 
         Extractor.extract(archivePath);
         val result = Parser.parse(TEMPORARY_FOLDER + BACKUP_FOLDER_NAME);
-        FileHelper.deleteDirectoryRecursively(Paths.get(TEMPORARY_FOLDER));
+        if(deleteUnarchived) FileHelper.deleteDirectoryRecursively(Paths.get(TEMPORARY_FOLDER));
 
         //TODO use targetPath here to save PDF
         String fontPath = "src\\main\\resources\\FreeSans.ttf";
