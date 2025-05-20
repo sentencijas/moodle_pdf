@@ -121,7 +121,7 @@ public class ArchiveExtractorUI {
         }
     }
 
-    private void parse(String archivePath, String targetPath) throws ParserConfigurationException, IOException, SAXException {
+    public static void parse(String archivePath, String targetPath) throws ParserConfigurationException, IOException, SAXException {
         final String TEMPORARY_FOLDER = "temp";
         final String BACKUP_FOLDER_NAME = "/backup";
 
@@ -132,7 +132,6 @@ public class ArchiveExtractorUI {
         //TODO use targetPath here to save PDF
         String fontPath = "src\\main\\resources\\FreeSans.ttf";
         new MoodlePdfGenerator().generatePdfFromCourse(result, fontPath, targetPath+"/output.pdf");
-
     }
 }
 

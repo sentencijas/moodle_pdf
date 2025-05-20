@@ -19,7 +19,6 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Paragraph;
-import lombok.val;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
@@ -156,12 +155,12 @@ public class MoodlePdfGenerator {
         for (int i = 1; i <= questionCount; i++) {
             String fieldName = "q" + i;
             String correct = correctAnswers.get(fieldName);
-            js.append("var q = this.getField('" + fieldName + "');\n");
-            js.append("if (q && q.value == '" + correct + "') {\n");
-            js.append("  score += 100 / " + questionCount + ";\n");
-            js.append("  results += 'Вопрос " + i + ": correct\\n';\n");
+            js.append("var q = this.getField('").append(fieldName).append("');\n");
+            js.append("if (q && q.value == '").append(correct).append("') {\n");
+            js.append("  score += 100 / ").append(questionCount).append(";\n");
+            js.append("  results += 'Вопрос ").append(i).append(": correct\\n';\n");
             js.append("} else {\n");
-            js.append("  results += 'Question " + i + ": error\\n';\n");
+            js.append("  results += 'Question ").append(i).append(": error\\n';\n");
             js.append("}\n");
         }
 
