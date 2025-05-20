@@ -5,7 +5,7 @@ import by.sentencija.entity.element.CourseElement;
 import java.util.List;
 
 public class Section implements PDFConvertable {
-    List<CourseElement> elements;
+    public List<CourseElement> elements;
 
     public Section(List<CourseElement> elements) {
         this.elements = elements;

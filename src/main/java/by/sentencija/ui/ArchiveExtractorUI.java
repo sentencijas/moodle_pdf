@@ -3,6 +3,7 @@ package by.sentencija.ui;
 import by.sentencija.parser.Extractor;
 import by.sentencija.parser.FileHelper;
 import by.sentencija.parser.Parser;
+import by.sentencija.pdfmaker.MoodlePdfGenerator;
 import lombok.val;
 import org.xml.sax.SAXException;
 
@@ -129,6 +130,9 @@ public class ArchiveExtractorUI {
         FileHelper.deleteDirectoryRecursively(Paths.get(TEMPORARY_FOLDER));
 
         //TODO use targetPath here to save PDF
+        String fontPath = "src\\main\\resources\\FreeSans.ttf";
+        new MoodlePdfGenerator().generatePdfFromCourse(result, fontPath, targetPath+"/output.pdf");
+
     }
 }
 
