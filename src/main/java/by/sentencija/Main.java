@@ -14,5 +14,10 @@ public class Main {
             return;
         }
         val result = Parser.parse(args[0]);
+
+        //запуск
+        String fontPath = "moodle_pdf\\src\\pdfmaker\\FreeSans.ttf";
+        String outputFilePath = "moodle_pdf\\src\\pdfmaker\\output.pdf";
+        PdfCourseRenderer.generate(result, fontPath, outputFilePath);
     }
 }
