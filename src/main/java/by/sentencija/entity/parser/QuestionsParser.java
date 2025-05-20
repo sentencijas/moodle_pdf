@@ -17,6 +17,7 @@ public class QuestionsParser extends XMLParser<Map<Integer,Question>> {
     private final Map<String, ? extends QuestionParser> PARSERS = Map.of(
             "truefalse", new TrueFalseQuestionParser(),
             "multichoice", new MultipleChoiceQuestionParser()
+            //TODO add text question
     );
 
     @Override
@@ -28,24 +29,27 @@ public class QuestionsParser extends XMLParser<Map<Integer,Question>> {
             val answersPosition = thisQuestion.getElementsByTagName("answers").item(0);
             val parserName = answersPosition.getParentNode().getNodeName().split("_")[2];
             if(PARSERS.containsKey(parserName)){
-               result.put(Integer.parseInt(thisQuestion.getAttribute("id")), PARSERS.get(parserName).parse(thisQuestion));
+               result.put(
+                       Integer.parseInt(thisQuestion.getAttribute("id")),
+                       PARSERS.get(parserName).parse(getValue(thisQuestion, "questiontext"), thisQuestion)
+               );
             }
         }
         return result;
     }
     interface QuestionParser{
-        Question parse(Element element);
+        Question parse(String questionText, Element element);
     }
     static final class TrueFalseQuestionParser implements QuestionParser {
         @Override
-        public TrueFalseQuestion parse(Element element) {
-            return new TrueFalseQuestion(round(Double.parseDouble(getValue(element, "fraction"))) == 1);
+        public TrueFalseQuestion parse(String questionText, Element element) {
+            return new TrueFalseQuestion(questionText, round(Double.parseDouble(getValue(element, "fraction"))) == 1);
         }
     }
     static final class MultipleChoiceQuestionParser implements QuestionParser {
         @Override
-        public MultipleChoiceQuestion parse(Element element) {
-            return new MultipleChoiceQuestion(Map.of()); //TODO
+        public MultipleChoiceQuestion parse(String questionText, Element element) {
+            return new MultipleChoiceQuestion(questionText, Map.of()); //TODO
         }
     }
 }

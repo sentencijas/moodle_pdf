@@ -20,9 +20,9 @@ public class Parser {
         val fileMap = new PluginFilesParser(path+"/files").parse(path+"/files.xml");
         val questions = new QuestionsParser().parse(path + "/questions.xml");
         val courseElements = CourseElementsParser.parse(
-   path+"/activities",
+                path+"/activities",
                 Map.of(
-                        "quiz",  new QuizParser()
+                        "quiz",  new QuizParser(questions)
                 )
         );
         val sections = SectionsParser.parse(path+"/sections", courseElements);
