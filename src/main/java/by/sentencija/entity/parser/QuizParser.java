@@ -10,9 +10,11 @@ import org.w3c.dom.Element;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Set;
 
 @AllArgsConstructor
 public class QuizParser extends XMLParser<Quiz> {
+    private final Set<String> files;
     private final Map<Integer, Question> questions;
     @Override
     protected Quiz parse(Document document) {
@@ -23,6 +25,13 @@ public class QuizParser extends XMLParser<Quiz> {
             val id = Integer.parseInt(questions.item(i).getTextContent());
             quizQuestions.add(this.questions.get(id));
         }
-        return new Quiz(getValue(quiz, "intro"), getValue(quiz, "name"), quizQuestions);
+        return new Quiz(
+                FileParser.replaceFileReference(
+                        getValue(quiz, "intro"),
+                        files
+                ),
+                getValue(quiz, "name"),
+                quizQuestions
+        );
     }
 }

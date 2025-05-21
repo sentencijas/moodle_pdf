@@ -5,6 +5,7 @@ import by.sentencija.entity.question.Question;
 import by.sentencija.entity.XMLParser;
 import by.sentencija.entity.question.TextQuestion;
 import by.sentencija.entity.question.TrueFalseQuestion;
+import lombok.AllArgsConstructor;
 import lombok.val;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -12,15 +13,22 @@ import org.w3c.dom.Element;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import static java.lang.Math.round;
 
 public class QuestionsParser extends XMLParser<Map<Integer,Question>> {
-    private final Map<String, ? extends QuestionParser> PARSERS = Map.of(
-            "truefalse", new TrueFalseQuestionParser(),
-            "multichoice", new MultipleChoiceQuestionParser(),
-            "shortanswer", new TextQuestionParser()
-    );
+    public QuestionsParser(Set<String> files){
+        this.files = files;
+        PARSERS = Map.of(
+                "truefalse", new TrueFalseQuestionParser(),
+                "multichoice", new MultipleChoiceQuestionParser(files),
+                "shortanswer", new TextQuestionParser()
+        );
+    }
+    private final Set<String> files;
+
+    private final Map<String, ? extends QuestionParser> PARSERS;
 
     @Override
     protected Map<Integer,Question> parse(Document document) {
@@ -33,7 +41,13 @@ public class QuestionsParser extends XMLParser<Map<Integer,Question>> {
             if(PARSERS.containsKey(parserName)){
                result.put(
                        Integer.parseInt(thisQuestion.getAttribute("id")),
-                       PARSERS.get(parserName).parse(getValue(thisQuestion, "questiontext"), thisQuestion)
+                       PARSERS.get(parserName).parse(
+                               FileParser.replaceFileReference(
+                                       getValue(thisQuestion, "questiontext"),
+                                       files
+                               ),
+                               thisQuestion
+                       )
                );
             }
         }
@@ -48,7 +62,9 @@ public class QuestionsParser extends XMLParser<Map<Integer,Question>> {
             return new TrueFalseQuestion(questionText, round(Double.parseDouble(getValue(element, "fraction"))) == 1);
         }
     }
+    @AllArgsConstructor
     static final class MultipleChoiceQuestionParser implements QuestionParser {
+        private final Set<String> files;
         @Override
         public MultipleChoiceQuestion parse(String questionText, Element element) {
             val answers = element.getElementsByTagName("answer");
@@ -56,10 +72,13 @@ public class QuestionsParser extends XMLParser<Map<Integer,Question>> {
             for(int i = 0;i<answers.getLength();i++){
                 val thisAnswer = (Element) answers.item(i);
                 result.add(
-                        getValue(thisAnswer, "answertext")
+                        FileParser.replaceFileReference(
+                                getValue(thisAnswer, "answertext"),
+                                files
+                        )
                 );
             }
-            return new MultipleChoiceQuestion(questionText, result, Boolean.parseBoolean(getValue(element,"single")));
+            return new MultipleChoiceQuestion(questionText, result, "1".equals(getValue(element,"single")));
         }
     }
     static final class TextQuestionParser implements QuestionParser{

@@ -8,6 +8,6 @@ import java.io.IOException;
 
 public class ConsoleMain {
     public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException {
-        ArchiveExtractorUI.parse("./src/main/resources/backup-moodle2-course-2-coursesn-20250521-0100.mbz", "src/main/resources", false);
+        ArchiveExtractorUI.parse("./src/main/resources/backup-moodle2-course-3-тестовый_курс-20250521-1305.mbz", "src/main/resources", true);
     }
 }
