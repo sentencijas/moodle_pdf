@@ -1,12 +1,7 @@
 package by.sentencija.entity.question;
 
-import lombok.Getter;
-
-@Getter
 public class TextQuestion extends Question{
-    private final String correctAnswer;
-    public TextQuestion(String text, String correctAnswer) {
+    public TextQuestion(String text) {
         super(text);
-        this.correctAnswer = correctAnswer;
     }
 }

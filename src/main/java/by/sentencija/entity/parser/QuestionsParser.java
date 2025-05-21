@@ -3,12 +3,14 @@ package by.sentencija.entity.parser;
 import by.sentencija.entity.question.MultipleChoiceQuestion;
 import by.sentencija.entity.question.Question;
 import by.sentencija.entity.XMLParser;
+import by.sentencija.entity.question.TextQuestion;
 import by.sentencija.entity.question.TrueFalseQuestion;
 import lombok.val;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import static java.lang.Math.round;
@@ -16,8 +18,8 @@ import static java.lang.Math.round;
 public class QuestionsParser extends XMLParser<Map<Integer,Question>> {
     private final Map<String, ? extends QuestionParser> PARSERS = Map.of(
             "truefalse", new TrueFalseQuestionParser(),
-            "multichoice", new MultipleChoiceQuestionParser()
-            //TODO add text question
+            "multichoice", new MultipleChoiceQuestionParser(),
+            "shortanswer", new TextQuestionParser()
     );
 
     @Override
@@ -50,15 +52,20 @@ public class QuestionsParser extends XMLParser<Map<Integer,Question>> {
         @Override
         public MultipleChoiceQuestion parse(String questionText, Element element) {
             val answers = element.getElementsByTagName("answer");
-            val result = new HashMap<String, Double>();
+            val result = new HashSet<String>();
             for(int i = 0;i<answers.getLength();i++){
                 val thisAnswer = (Element) answers.item(i);
-                result.put(
-                        getValue(thisAnswer, "answertext"),
-                        Double.parseDouble(getValue(thisAnswer, "fraction"))
+                result.add(
+                        getValue(thisAnswer, "answertext")
                 );
             }
-            return new MultipleChoiceQuestion(questionText, result);
+            return new MultipleChoiceQuestion(questionText, result, Boolean.parseBoolean(getValue(element,"single")));
+        }
+    }
+    static final class TextQuestionParser implements QuestionParser{
+        @Override
+        public TextQuestion parse(String questionText, Element element) {
+            return new TextQuestion(questionText);
         }
     }
 }

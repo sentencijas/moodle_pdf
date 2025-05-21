@@ -41,5 +41,10 @@
             <artifactId>slf4j-simple</artifactId>
             <version>1.7.36</version>
         </dependency>
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>html2pdf</artifactId>
+            <version>4.0.5</version> <!-- Make sure versions match your iText core -->
+        </dependency>
     </dependencies>
 </project>

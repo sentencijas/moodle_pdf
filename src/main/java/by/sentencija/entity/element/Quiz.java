@@ -11,6 +11,7 @@ import java.util.List;
 @Getter
 public class Quiz extends CourseElement implements PDFConvertable  {
     private final String introText;
+    private final String name;
     private final List<Question> questions;
 
     @Override

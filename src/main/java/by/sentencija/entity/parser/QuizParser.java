@@ -23,6 +23,6 @@ public class QuizParser extends XMLParser<Quiz> {
             val id = Integer.parseInt(questions.item(i).getTextContent());
             quizQuestions.add(this.questions.get(id));
         }
-        return new Quiz(getValue(quiz, "intro"), quizQuestions);
+        return new Quiz(getValue(quiz, "intro"), getValue(quiz, "name"), quizQuestions);
     }
 }

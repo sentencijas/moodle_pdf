@@ -20,10 +20,9 @@ public class SectionsParser {
         if(files == null) throw new RuntimeException("Sections path should be a folder");
         val result = new ArrayList<Section>();
         for (val file : files) {
-            val sectionElements = new SectionParser().parse(file.getAbsolutePath()+"/section.xml");
-            if(sectionElements.isEmpty()) continue;
-            val elements = sectionElements.stream().map(courseElements::get).toList();
-            result.add(new Section(elements));
+            val sectionPath = file.getAbsolutePath()+"/section.xml";
+            val section = new SectionParser(courseElements).parse(sectionPath);
+            if(!section.getElements().isEmpty()) result.add(section);
         }
         return result;
     }
