@@ -1,3 +1,8 @@
 package by.sentencija.entity.element;
 
-public abstract class CourseElement{} //marker class
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor
+public abstract class CourseElement{
+    private final Long contextId;
+} //marker class

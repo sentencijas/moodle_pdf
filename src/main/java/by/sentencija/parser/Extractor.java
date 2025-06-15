@@ -22,33 +22,24 @@ import java.util.zip.GZIPInputStream;
 public class Extractor {
     public static void extract(String gzipFile) {
         val outputDir = "temp";
-
         try {
             Path tempDir = Paths.get(outputDir, "temp");
             Files.createDirectories(tempDir);
-
             Path innerArchive = tempDir.resolve("inner.archive");
-
-            // Step 1: Decompress .gz
             try (
                     GZIPInputStream gis = new GZIPInputStream(new FileInputStream(gzipFile));
                     FileOutputStream fos = new FileOutputStream(innerArchive.toFile())
             ) {
                 gis.transferTo(fos);
             }
-
-            // Step 2: Try various archive formats
             Path finalOutput = Paths.get(outputDir, "backup");
             Files.createDirectories(finalOutput);
-
             try (InputStream is = new BufferedInputStream(new FileInputStream(innerArchive.toFile()));
                  ArchiveInputStream ais = tryDetectArchiveFormat(is)) {
-
                 if (ais == null) {
-                    System.err.println("Unknown archive format.");
+                    System.err.println("Неизвестный формат архива");
                     return;
                 }
-
                 ArchiveEntry entry;
                 while ((entry = ais.getNextEntry()) != null) {
                     if (!ais.canReadEntryData(entry)) {
@@ -65,15 +56,12 @@ public class Extractor {
                     }
                 }
             }
-
         } catch (IOException | ArchiveException e) {
             e.printStackTrace();
         }
-
     }
-
     private static ArchiveInputStream tryDetectArchiveFormat(InputStream is) throws IOException, ArchiveException {
-        is.mark(10240);  // mark for reset
+        is.mark(10240);
         try {
             return new TarArchiveInputStream(new BufferedInputStream(is));
         } catch (Exception e) {
@@ -93,7 +81,6 @@ public class Extractor {
         } catch (Exception e) {
             is.reset();
         }
-
-        return null; // unknown format
+        return null;
     }
 }

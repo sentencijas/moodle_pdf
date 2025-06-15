@@ -128,8 +128,7 @@ public class ArchiveExtractorUI {
         Extractor.extract(archivePath);
         val result = Parser.parse(TEMPORARY_FOLDER + BACKUP_FOLDER_NAME);
 
-        //TODO use targetPath here to save PDF
-        String fontPath = "src\\main\\resources\\FreeSans.ttf";
+        String fontPath = "src/main/resources/fonts/NotoSans-Regular.ttf";
         new MoodlePdfGenerator().generatePdfFromCourse(result, fontPath, targetPath+"/output.pdf");
         if(deleteUnarchived) FileHelper.deleteDirectoryRecursively(Paths.get(TEMPORARY_FOLDER));
     }

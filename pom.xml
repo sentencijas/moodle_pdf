@@ -44,7 +44,19 @@
         <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>html2pdf</artifactId>
-            <version>4.0.5</version> <!-- Make sure versions match your iText core -->
+            <version>4.0.5</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.scilab.forge/jlatexmath -->
+        <dependency>
+            <groupId>org.scilab.forge</groupId>
+            <artifactId>jlatexmath</artifactId>
+            <version>1.0.7</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/net.sourceforge.jeuclid/jeuclid-core -->
+        <dependency>
+            <groupId>net.sourceforge.jeuclid</groupId>
+            <artifactId>jeuclid-core</artifactId>
+            <version>3.1.9</version>
         </dependency>
     </dependencies>
 </project>

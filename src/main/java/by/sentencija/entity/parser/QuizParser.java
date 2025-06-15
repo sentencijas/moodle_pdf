@@ -3,35 +3,75 @@ package by.sentencija.entity.parser;
 import by.sentencija.entity.XMLParser;
 import by.sentencija.entity.element.Quiz;
 import by.sentencija.entity.question.Question;
-import lombok.AllArgsConstructor;
+import by.sentencija.entity.question.RandomQuestion;
 import lombok.val;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
+import java.util.Random;
 
-@AllArgsConstructor
 public class QuizParser extends XMLParser<Quiz> {
-    private final Set<String> files;
-    private final Map<Integer, Question> questions;
+    private static final Logger logger = LoggerFactory.getLogger(QuizParser.class);
+    private static final Random random = new Random();
+
+    private final Map<Integer, HashMap<Integer, Question>> questions;
+    private final Map<Integer, ArrayList<Question>> randomQuestions;
+
+    public QuizParser(Map<Integer, HashMap<Integer, Question>> questions){
+        this.questions = questions;
+        randomQuestions = new HashMap<>();
+        for(val entry: questions.entrySet()){
+            val set = new ArrayList<Question>();
+            for(val questionEntry : entry.getValue().entrySet()){
+                val thisQuestion = questionEntry.getValue();
+                if(thisQuestion.getClass() != RandomQuestion.class){
+                    set.add(thisQuestion);
+                }
+            }
+            randomQuestions.put(entry.getKey(), set);
+        }
+    }
     @Override
     protected Quiz parse(Document document) {
+
         val quiz = (Element) document.getElementsByTagName("quiz").item(0);
-        val questions = quiz.getElementsByTagName("questionbankentryid");
+        val questions = quiz.getElementsByTagName("question_instance");
         val quizQuestions = new ArrayList<Question>();
         for(int i = 0;i<questions.getLength();i++){
-            val id = Integer.parseInt(questions.item(i).getTextContent());
-            quizQuestions.add(this.questions.get(id));
+            val question = (Element) questions.item(0);
+            val categoryId = Integer.parseInt(getValue(question, "questioncategoryid"));
+            if(!this.questions.containsKey(categoryId)){
+                logger.error("Category with id {} not found for question {}", categoryId, question);
+                continue;
+            }
+            val id = Integer.parseInt(getValue(question, "questionid"));
+            if(!this.questions.get(categoryId).containsKey(id)){
+                logger.error("Question with id {} not found for category {}", id, categoryId);
+                continue;
+            }
+            var questionToAdd = this.questions.get(categoryId).get(id);
+            if(questionToAdd.getClass() == RandomQuestion.class){
+                val categoryRandomQuestions = randomQuestions.get(categoryId);
+                if(categoryRandomQuestions.isEmpty()){
+                    logger.error("Tried to add a random question from category {} but all of the questions were already used, in quiz {}", categoryId, quiz.getAttribute("id"));
+                    continue;
+                }
+                questionToAdd = categoryRandomQuestions.remove(random.nextInt(categoryRandomQuestions.size()));
+            }
+            quizQuestions.add(questionToAdd);
         }
+        val contextId = getContextId(document);
         return new Quiz(
-                FileParser.replaceFileReference(
-                        getValue(quiz, "intro"),
-                        files
-                ),
+                contextId,
+                FileParser.replaceFileReference(getValue(quiz, "intro"), contextId),
                 getValue(quiz, "name"),
                 quizQuestions
         );
+
     }
 }

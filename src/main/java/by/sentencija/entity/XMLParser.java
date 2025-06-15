@@ -21,4 +21,10 @@ public abstract class XMLParser<T> {
     protected static String getValue(Element element, String nodeName){
         return element.getElementsByTagName(nodeName).item(0).getTextContent();
     }
+    protected static String getValue(Element element, String nodeName, String wrapTag){
+        return "<" + wrapTag + ">" + getValue(element, nodeName) + "</" + wrapTag + ">";
+    }
+    protected static Long getContextId(Document document){
+        return Long.parseLong(((Element) document.getElementsByTagName("activity").item(0)).getAttribute("contextid"));
+    }
 }

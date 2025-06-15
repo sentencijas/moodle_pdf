@@ -1,9 +1,12 @@
 package by.sentencija.parser;
 
 import by.sentencija.entity.MoodleCourse;
+import by.sentencija.entity.parser.AssignmentParser;
 import by.sentencija.entity.parser.CourseElementsParser;
 import by.sentencija.entity.parser.CourseParser;
 import by.sentencija.entity.parser.FileParser;
+import by.sentencija.entity.parser.LabelParser;
+import by.sentencija.entity.parser.PageParser;
 import by.sentencija.entity.parser.PluginFilesParser;
 import by.sentencija.entity.parser.QuestionsParser;
 import by.sentencija.entity.parser.QuizParser;
@@ -20,15 +23,18 @@ public class Parser {
         val course = new CourseParser().parse(path + "/course/course.xml");
         val fileMap = new PluginFilesParser(path+"/files").parse(path+"/files.xml");
         FileParser.createFilesFolder(fileMap, "./temp/files");
-        val files = fileMap.keySet();
-        val questions = new QuestionsParser(files).parse(path + "/questions.xml");
+        FileHelper.createLaTeXFilesFolder();
+        val questions = new QuestionsParser().parse(path + "/questions.xml");
         val courseElements = CourseElementsParser.parse(
                 path+"/activities",
                 Map.of(
-                        "quiz",  new QuizParser(files, questions)
+                        "quiz",  new QuizParser(questions),
+                        "page", new PageParser(),
+                        "label", new LabelParser(),
+                        "assign", new AssignmentParser()
                 )
         );
         val sections = SectionsParser.parse(path+"/sections", courseElements);
-        return new MoodleCourse(course, fileMap, sections);
+        return new MoodleCourse(course, sections);
     }
 }

@@ -7,13 +7,12 @@ import lombok.Getter;
 import java.util.List;
 
 @Getter
-@AllArgsConstructor
-public class Section implements PDFConvertable {
-    private String name;
-    private List<? extends CourseElement> elements;
+public class Section{
+    private final String name;
+    private final List<? extends CourseElement> elements;
 
-    @Override
-    public Object covertToPDF() { //TODO
-        return this;
+    public Section(String name, List<? extends CourseElement> elements){
+        this.name = "$@NULL@$".equals(name) ? "Секция без названия" : name;
+        this.elements = elements;
     }
 }
