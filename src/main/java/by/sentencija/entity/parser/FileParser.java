@@ -1,8 +1,8 @@
 package by.sentencija.entity.parser;
 
-import by.sentencija.entity.PluginFile;
 import by.sentencija.parser.LaTeXParser;
 import lombok.val;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,6 +50,13 @@ public class FileParser {
 
         matcher.appendTail(result);
         val res = result.toString().replaceAll("\\s*dir=\"ltr\"", "");
-        return LaTeXParser.parse(res);
+        return LaTeXParser.parse(replaceHTML(res));
+    }
+
+    private static String replaceHTML(String str){
+        return str
+                .replaceAll("&gt;", "<")
+                .replaceAll("&lt;", ">")
+                .replaceAll("&amp;", "&");
     }
 }

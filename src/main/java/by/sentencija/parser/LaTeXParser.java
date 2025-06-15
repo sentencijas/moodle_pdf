@@ -31,6 +31,7 @@ public class LaTeXParser {
             createAndSave(latex, Path.of("./temp/files/latex/file" + fileCounter + ".png"));
             fileCounter++;
         }
+        matcher.appendTail(result);
 
         return result.toString();
     }
@@ -39,7 +40,7 @@ public class LaTeXParser {
     }
     private static void createAndSave(String latex, Path path) {
         // Parse LaTeX and create icon
-        TeXFormula formula = new TeXFormula(latex);
+        TeXFormula formula = new TeXFormula("{" + latex);
         var icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, 20);
 
         // Create BufferedImage and draw icon

@@ -46,19 +46,21 @@ public class QuizParser extends XMLParser<Quiz> {
             val question = (Element) questions.item(0);
             val categoryId = Integer.parseInt(getValue(question, "questioncategoryid"));
             if(!this.questions.containsKey(categoryId)){
-                logger.error("Category with id {} not found for question {}", categoryId, question);
+                logger.error("Категория с идентификатором {} не найдена для вопроса {}", categoryId, question);
                 continue;
             }
             val id = Integer.parseInt(getValue(question, "questionid"));
             if(!this.questions.get(categoryId).containsKey(id)){
-                logger.error("Question with id {} not found for category {}", id, categoryId);
+                logger.error("Вопрос с идентификатором {} не найден для категории {}", id, categoryId);
                 continue;
             }
             var questionToAdd = this.questions.get(categoryId).get(id);
             if(questionToAdd.getClass() == RandomQuestion.class){
                 val categoryRandomQuestions = randomQuestions.get(categoryId);
                 if(categoryRandomQuestions.isEmpty()){
-                    logger.error("Tried to add a random question from category {} but all of the questions were already used, in quiz {}", categoryId, quiz.getAttribute("id"));
+                    logger.error("Была произведена попытка добавить случайный вопрос из категории {}" +
+                                    ", но все вопросы уже были использованы, в тесте {}",
+                            categoryId, quiz.getAttribute("id"));
                     continue;
                 }
                 questionToAdd = categoryRandomQuestions.remove(random.nextInt(categoryRandomQuestions.size()));

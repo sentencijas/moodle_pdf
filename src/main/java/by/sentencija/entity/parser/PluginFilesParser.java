@@ -1,6 +1,5 @@
 package by.sentencija.entity.parser;
 
-import by.sentencija.entity.PluginFile;
 import by.sentencija.entity.XMLParser;
 import lombok.AllArgsConstructor;
 import lombok.val;

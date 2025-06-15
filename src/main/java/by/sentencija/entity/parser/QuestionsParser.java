@@ -47,7 +47,7 @@ public class QuestionsParser extends XMLParser<Map<Integer,HashMap<Integer,Quest
                     categoryMap.put(
                             Integer.parseInt(thisQuestion.getAttribute("id")),
                             PARSERS.get(parserName).parse(
-                                    FileParser.replaceFileReference(getValue(thisQuestion, "questiontext"), 0L),
+                                    FileParser.replaceFileReference(getValue(thisQuestion, "questiontext"), 0L), //TODO: why 0L?
                                     thisQuestion
                             )
                     );

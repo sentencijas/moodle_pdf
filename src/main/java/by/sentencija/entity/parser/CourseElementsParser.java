@@ -15,9 +15,9 @@ public class CourseElementsParser {
     public static Map<Integer, CourseElement> parse(String path, Map<String, XMLParser<? extends CourseElement>> parsableElements)
             throws ParserConfigurationException, IOException, SAXException {
         val folder = new File(path);
-        if(!folder.exists()) throw new RuntimeException("Activities file doesn't exist");
+        if(!folder.exists()) throw new RuntimeException("Указанный каталог не существует");
         val files = folder.listFiles();
-        if(files == null) throw new RuntimeException("Activities path should be a folder");
+        if(files == null) throw new RuntimeException("Указанный путь должен быть каталогом");
         val result = new HashMap<Integer,CourseElement>();
         for(val file: files){
             val fileName = file.getName();

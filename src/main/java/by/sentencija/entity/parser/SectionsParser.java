@@ -18,19 +18,21 @@ import java.util.Objects;
 public class SectionsParser {
     private final static Logger logger = LoggerFactory.getLogger(SectionsParser.class);
 
-    public static List<Section> parse(String path, Map<Integer, CourseElement> courseElements) throws ParserConfigurationException, IOException, SAXException {
+    public static List<Section> parse(String path, Map<Integer, CourseElement> courseElements)
+            throws ParserConfigurationException, IOException, SAXException {
         val folder = new File(path);
-        if(!folder.exists()) throw new RuntimeException("Sections file doesn't exist");
+        if(!folder.exists()) throw new RuntimeException("Указанный файл не существует");
         val files = folder.listFiles();
-        if(files == null) throw new RuntimeException("Sections path should be a folder");
+        if(files == null) throw new RuntimeException("Указанный путь должен быть каталогом");
         val result = new ArrayList<Section>();
         for (val file : files) {
             val sectionPath = file.getAbsolutePath()+"/section.xml";
             val section = new SectionParser(courseElements).parse(sectionPath);
-            if(section.getElements().contains(null)){
-                logger.info("Section contains {} elements which do not have parsers (and are null)", section.getElements().stream().filter(Objects::isNull).count());
+            if(section.elements().contains(null)){
+                logger.info("Секция содержит {} элементов, которые не имеют обработчиков (и поэтому равны null)",
+                        section.elements().stream().filter(Objects::isNull).count());
             }
-            if(!section.getElements().isEmpty()) result.add(section);
+            if(!section.elements().isEmpty()) result.add(section);
         }
         return result;
     }

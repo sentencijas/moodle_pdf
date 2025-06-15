@@ -15,7 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 
-public class ArchiveExtractorUI {
+public class UI {
 
     private JFrame frame;
     private JTextField filePathField;
@@ -34,7 +34,6 @@ public class ArchiveExtractorUI {
         frame.setLayout(new BorderLayout(10, 10));
         frame.getRootPane().setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // === Top: File chooser row ===
         JPanel filePanel = new JPanel(new BorderLayout(5, 5));
         filePathField = new JTextField();
         filePathField.setEditable(false);
@@ -55,18 +54,16 @@ public class ArchiveExtractorUI {
 
         Box topBox = Box.createVerticalBox();
         topBox.add(filePanel);
-        topBox.add(Box.createVerticalStrut(8)); // spacing between rows
+        topBox.add(Box.createVerticalStrut(8));
         topBox.add(folderPanel);
 
         frame.add(topBox, BorderLayout.NORTH);
 
-        // === Middle: Progress bar ===
         progressBar = new JProgressBar();
         progressBar.setIndeterminate(false);
         progressBar.setStringPainted(true);
         frame.add(progressBar, BorderLayout.CENTER);
 
-        // === Bottom: Process button aligned right ===
         processButton = new JButton("Обработать");
         processButton.setEnabled(false);
 
@@ -121,7 +118,8 @@ public class ArchiveExtractorUI {
         }
     }
 
-    public static void parse(String archivePath, String targetPath, boolean deleteUnarchived) throws ParserConfigurationException, IOException, SAXException {
+    public static void parse(String archivePath, String targetPath, boolean deleteUnarchived)
+            throws ParserConfigurationException, IOException, SAXException {
         final String TEMPORARY_FOLDER = "temp";
         final String BACKUP_FOLDER_NAME = "/backup";
 

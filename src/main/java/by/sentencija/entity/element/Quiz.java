@@ -17,5 +17,4 @@ public class Quiz extends CourseElement{
         this.name = name;
         this.questions = questions;
     }
-
 }

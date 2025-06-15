@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Comparator;
 
 public class FileHelper {
     private final static Logger logger = LoggerFactory.getLogger(FileHelper.class);
@@ -14,12 +13,11 @@ public class FileHelper {
     public static void deleteDirectoryRecursively(Path path) throws IOException {
         if (Files.exists(path)) {
             Files.walk(path)
-                    .sorted(Comparator.reverseOrder()) // delete files before directories
                     .forEach(p -> {
                         try {
                             Files.delete(p);
                         } catch (IOException e) {
-                            System.err.println("Failed to delete " + p + ": " + e.getMessage());
+                            System.err.println("Произошла ошибка при удалении " + p + ": " + e.getMessage());
                         }
                     });
         }
@@ -28,7 +26,7 @@ public class FileHelper {
         try {
             Files.createDirectories(Path.of("./temp/files/latex"));
         } catch (IOException exception){
-            logger.error("Cannot create the LaTeX files directory");
+            logger.error("Произошла ошибка при создании директории для изображений LaTeX");
         }
     }
 }
