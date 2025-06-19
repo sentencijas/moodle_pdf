@@ -9,6 +9,6 @@ public class LabelRenderer implements PDFRenderer<Label>{
     private final static MoodlePdfGenerator generator = new MoodlePdfGenerator();
     @Override
     public void render(PdfDocument pdf, Document doc, PdfAcroForm form, Label element) {
-        generator.addHtmlString(doc, element.getIntro());
+        generator.addHtmlString(doc, pdf, element.getIntro());
     }
 }

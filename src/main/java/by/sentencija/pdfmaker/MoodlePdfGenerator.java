@@ -16,24 +16,27 @@ import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
-import com.itextpdf.layout.element.AreaBreak;
+import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.IBlockElement;
+import com.itextpdf.layout.element.IElement;
+import com.itextpdf.layout.element.Image;
+import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.font.FontProvider;
-import com.itextpdf.layout.properties.AreaBreakType;
 import lombok.val;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Map;
 
 public class MoodlePdfGenerator {
     private final ConverterProperties props = new ConverterProperties();
     private final FontProvider fontProvider = new DefaultFontProvider(false, false, false);
-    private final static List<String> fonts = List.of("NotoSans-Regular", "times");
+    private final static java.util.List<String> fonts = java.util.List.of("NotoSans-Regular", "times");
     public MoodlePdfGenerator(){
         for(val fontName : fonts){
             loadFont(fontProvider, fontName);
@@ -45,6 +48,7 @@ public class MoodlePdfGenerator {
     private final static Logger logger = LoggerFactory.getLogger(MoodlePdfGenerator.class);
 
     public void generatePdfFromCourse(MoodleCourse courseData, String fontPath, String outputPath) throws IOException {
+        Files.createDirectories(Path.of(outputPath));
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outputPath));
         Document document = new Document(pdfDoc);
         document.setFont(PdfFontFactory.createFont(fontPath, PdfEncodings.IDENTITY_H));
@@ -71,11 +75,45 @@ public class MoodlePdfGenerator {
         document.close();
         logger.info("PDF создан: {}", outputPath);
     }
-    public void addHtmlString(Document doc, String string){
+    public void addHtmlString(Document doc, PdfDocument pdf, String string){
+
+        float maxWidth = pdf.getDefaultPageSize().getWidth() - doc.getLeftMargin() - doc.getRightMargin();
         val elements = HtmlConverter.convertToElements(string, props);
-        for(val element : elements){
-            doc.add((IBlockElement) element);
+        for (IElement element : elements) {
+            scaleImages(element, maxWidth);
+
+            if (element instanceof IBlockElement) {
+                doc.add((IBlockElement) element);
+            } else if (element instanceof Image) {
+                doc.add((Image) element);
+            } else {
+                // Wrap unknowns in paragraph
+                doc.add((IBlockElement) element);
+            }
         }
+    }
+
+
+    private static void scaleImages(Object element, float maxWidth) {
+        if (element instanceof Image) {
+            Image img = (Image) element;
+            if (img.getImageScaledWidth() > maxWidth) {
+                img.scaleToFit(maxWidth, Float.MAX_VALUE);
+            }
+        } else if (element instanceof Paragraph) {
+            for (IElement child : ((Paragraph) element).getChildren()) {
+                scaleImages(child, maxWidth);
+            }
+        } else if (element instanceof Div) {
+            for (IElement child : ((Div) element).getChildren()) {
+                scaleImages(child, maxWidth);
+            }
+        } else if (element instanceof List) {
+            for (val item : ((List) element).getChildren()) {
+                scaleImages(item, maxWidth);
+            }
+        }
+        // Add more types if needed (Table, Cell, etc.)
     }
 
     private void loadFont(FontProvider fontProvider, String name){

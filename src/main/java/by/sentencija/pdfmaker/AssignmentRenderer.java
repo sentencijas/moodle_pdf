@@ -11,8 +11,8 @@ public class AssignmentRenderer implements PDFRenderer<Assignment> {
     private final static MoodlePdfGenerator generator = new MoodlePdfGenerator();
     @Override
     public void render(PdfDocument pdf, Document doc, PdfAcroForm form, Assignment element) {
-        generator.addHtmlString(doc, element.getName());
-        generator.addHtmlString(doc, element.getIntro());
+        generator.addHtmlString(doc, pdf, element.getName());
+        generator.addHtmlString(doc, pdf, element.getIntro());
         doc.add(new LineSeparator(new SolidLine(1)));
     }
 }

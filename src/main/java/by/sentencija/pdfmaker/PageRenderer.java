@@ -13,7 +13,7 @@ public class PageRenderer implements PDFRenderer<Page> {
     @Override
     public void render(PdfDocument pdf, Document doc, PdfAcroForm form, Page page) {
         doc.add(new Paragraph("Страница: " + page.getTitle()).setBold());
-        generator.addHtmlString(doc, page.getContent());
+        generator.addHtmlString(doc, pdf, page.getContent());
         doc.add(new LineSeparator(new SolidLine(1)));
     }
 }

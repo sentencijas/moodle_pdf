@@ -11,6 +11,7 @@ import com.itextpdf.forms.fields.PdfTextFormField;
 import com.itextpdf.html2pdf.HtmlConverter;
 import com.itextpdf.kernel.pdf.*;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.canvas.draw.SolidLine;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.AreaBreak;
@@ -23,6 +24,7 @@ import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.properties.AreaBreakType;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.CellRenderer;
+import com.itextpdf.layout.renderer.DivRenderer;
 import com.itextpdf.layout.renderer.DrawContext;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.ParagraphRenderer;
@@ -39,7 +41,7 @@ public class QuizRenderer implements PDFRenderer<Quiz> {
     @Override
     public void render(PdfDocument pdf, Document doc, PdfAcroForm form, Quiz courseElement) {
         doc.add(new Paragraph("Тест: " + courseElement.getName()));
-        generator.addHtmlString(doc, courseElement.getIntroText());
+        generator.addHtmlString(doc, pdf, courseElement.getIntroText());
         addQuestionForm(pdf, doc, form, courseElement.getQuestions(), "quiz_" + courseElement.hashCode());
         doc.add(new LineSeparator(new SolidLine(1)));
     }
@@ -131,18 +133,23 @@ public class QuizRenderer implements PDFRenderer<Quiz> {
             PdfDocument pdf, Document doc, PdfAcroForm form,
             TextQuestion question, String groupName) {
 
+        // Add question HTML text
         HtmlConverter.convertToElements(question.getText())
                 .forEach(iElement -> doc.add((IBlockElement) iElement));
-        doc.add(new Paragraph("Введите ваш ответ:"));
-        PdfTextFormField textField = PdfFormField.createText(
-                pdf,
-                new com.itextpdf.kernel.geom.Rectangle( 200, 20),
-                "nameField",
-                ""
-        );
 
-        form.addField(textField);
+        // Add label
+        doc.add(new Paragraph("Введите ваш ответ:"));
+
+        // Create a placeholder Div for the field
+        Div fieldDiv = new Div()
+                .setHeight(20)
+                .setWidth(200)
+                .setMarginTop(5); // Optional spacing
+
+        fieldDiv.setNextRenderer(new TextFieldRenderer(fieldDiv, groupName + "_textField", pdf));
+        doc.add(fieldDiv);
     }
+
 
     static class RadioCellRenderer extends CellRenderer {
         PdfButtonFormField radioGroup;
@@ -191,4 +198,37 @@ public class QuizRenderer implements PDFRenderer<Quiz> {
             return new CheckboxCellRenderer((Cell) getModelElement(), fieldName, pdf);
         }
     }
+
+    static class TextFieldRenderer extends DivRenderer {
+        private final PdfDocument pdf;
+        private final String fieldName;
+
+        public TextFieldRenderer(Div modelElement, String fieldName, PdfDocument pdf) {
+            super(modelElement);
+            this.fieldName = fieldName;
+            this.pdf = pdf;
+        }
+
+        @Override
+        public void draw(DrawContext drawContext) {
+            super.draw(drawContext);
+
+            Rectangle rect = getOccupiedAreaBBox();
+
+            PdfTextFormField textField = PdfFormField.createText(
+                    pdf,
+                    rect,
+                    fieldName,
+                    ""
+            );
+
+            PdfAcroForm.getAcroForm(pdf, true).addField(textField);
+        }
+
+        @Override
+        public IRenderer getNextRenderer() {
+            return new TextFieldRenderer((Div) getModelElement(), fieldName, pdf);
+        }
+    }
+
 }
